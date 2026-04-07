@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Price Sensitivity Analysis System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+                        <rect width="40" height="40" rx="8" fill="#4F46E5"/>
+                        <path d="M12 20L18 14L24 20L30 14" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M12 26L18 20L24 26L30 20" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <h1>Price Sensitivity Analyzer</h1>
+                </div>
+                <nav class="nav">
+                    <a href="#upload" class="nav-link">Upload Data</a>
+                    <a href="#results" class="nav-link">Results</a>
+                    <a href="#about" class="nav-link">About</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h2 class="hero-title">AI-Powered Price Optimization</h2>
+                <p class="hero-subtitle">Predict demand, identify optimal pricing, and maximize revenue with machine learning</p>
+                <div class="hero-stats">
+                    <div class="stat">
+                        <span class="stat-number">90%</span>
+                        <span class="stat-label">Faster Analysis</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-number">4</span>
+                        <span class="stat-label">Product Categories</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-number">R² > 0.7</span>
+                        <span class="stat-label">Model Accuracy</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Upload Section -->
+    <section id="upload" class="upload-section">
+        <div class="container">
+            <div class="section-header">
+                <h3 class="section-title">Upload Your Data</h3>
+                <p class="section-subtitle">Upload a CSV file with Product_Name, Category, Price, and Units_Sold columns</p>
+            </div>
+            
+            <div class="upload-container">
+                <form id="uploadForm" enctype="multipart/form-data">
+                    <div class="upload-box" id="uploadBox">
+                        <svg class="upload-icon" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                            <polyline points="17 8 12 3 7 8"/>
+                            <line x1="12" y1="3" x2="12" y2="15"/>
+                        </svg>
+                        <p class="upload-text">Drop your CSV file here or <span class="upload-link">browse</span></p>
+                        <p class="upload-hint">Supports CSV files up to 16MB</p>
+                        <input type="file" id="fileInput" name="file" accept=".csv" hidden>
+                    </div>
+                    
+                    <div class="file-info" id="fileInfo" style="display: none;">
+                        <div class="file-details">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/>
+                                <polyline points="13 2 13 9 20 9"/>
+                            </svg>
+                            <span id="fileName"></span>
+                        </div>
+                        <button type="button" class="btn-remove" id="removeFile">Remove</button>
+                    </div>
+                    
+                    <div class="btn-group">
+                        <button type="submit" class="btn btn-primary" id="analyzeBtn">
+                            <span>Analyze Data</span>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="5" y1="12" x2="19" y2="12"/>
+                                <polyline points="12 5 19 12 12 19"/>
+                            </svg>
+                        </button>
+                        <button type="button" class="btn btn-secondary" id="sampleBtn">Use Sample Data</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Loading Spinner -->
+    <div class="loading-overlay" id="loadingOverlay" style="display: none;">
+        <div class="spinner"></div>
+        <p>Analyzing data and training model...</p>
+    </div>
+
+    <!-- Results Section -->
+    <section id="results" class="results-section" style="display: none;">
+        <div class="container">
+            <div class="section-header">
+                <h3 class="section-title">Analysis Results</h3>
+                <p class="section-subtitle">Machine learning insights and price optimization recommendations</p>
+            </div>
+
+            <!-- Data Summary -->
+            <div class="card">
+                <div class="card-header">
+                    <h4>📊 Dataset Summary</h4>
+                </div>
+                <div class="card-body">
+                    <div class="summary-grid" id="dataSummary"></div>
+                </div>
+            </div>
+
+            <!-- Model Performance -->
+            <div class="card">
+                <div class="card-header">
+                    <h4>🎯 Model Performance Metrics</h4>
+                </div>
+                <div class="card-body">
+                    <div class="metrics-grid" id="metricsGrid"></div>
+                </div>
+            </div>
+
+            <!-- Visualizations -->
+            <div class="charts-grid">
+                <div class="card">
+                    <div class="card-header">
+                        <h4>📈 Price vs Demand</h4>
+                    </div>
+                    <div class="card-body">
+                        <img id="scatterChart" class="chart-img" alt="Scatter plot">
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h4>✅ Model Validation</h4>
+                    </div>
+                    <div class="card-body">
+                        <img id="validationChart" class="chart-img" alt="Validation plot">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Price Sensitivity Curves -->
+            <div class="card">
+                <div class="card-header">
+                    <h4>📉 Price Sensitivity Curves</h4>
+                </div>
+                <div class="card-body">
+                    <img id="curvesChart" class="chart-img" alt="Price sensitivity curves">
+                </div>
+            </div>
+
+            <!-- Optimal Prices -->
+            <div class="card">
+                <div class="card-header">
+                    <h4>💰 Optimal Pricing Recommendations</h4>
+                </div>
+                <div class="card-body">
+                    <div class="optimal-grid" id="optimalPrices"></div>
+                </div>
+            </div>
+
+            <!-- Model Coefficients -->
+            <div class="card">
+                <div class="card-header">
+                    <h4>🔢 Model Coefficients</h4>
+                </div>
+                <div class="card-body">
+                    <div class="coefficients-grid" id="coefficients"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="about-section">
+        <div class="container">
+            <div class="about-content">
+                <h3>About This System</h3>
+                <p>This Price Sensitivity Analysis System uses linear regression to predict consumer demand across multiple product categories based on price variations. The system generates price sensitivity curves and identifies optimal pricing points for revenue maximization.</p>
+                
+                <div class="features-grid">
+                    <div class="feature">
+                        <div class="feature-icon">🤖</div>
+                        <h4>ML-Powered</h4>
+                        <p>Uses scikit-learn linear regression for accurate demand prediction</p>
+                    </div>
+                    <div class="feature">
+                        <div class="feature-icon">📊</div>
+                        <h4>Visual Analytics</h4>
+                        <p>Interactive charts and price sensitivity curves</p>
+                    </div>
+                    <div class="feature">
+                        <div class="feature-icon">💡</div>
+                        <h4>Optimization</h4>
+                        <p>Identifies revenue-maximizing price points automatically</p>
+                    </div>
+                    <div class="feature">
+                        <div class="feature-icon">🎯</div>
+                        <h4>Multi-Category</h4>
+                        <p>Analyzes smartphones, tablets, smartwatches, and earbuds</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2026 Price Sensitivity Analysis System | SR University | Patent Pending</p>
+        </div>
+    </footer>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>
